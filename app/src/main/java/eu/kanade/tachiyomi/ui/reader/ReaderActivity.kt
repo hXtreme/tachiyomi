@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -13,6 +14,7 @@ import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.SeekBar
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.database.models.Chapter
 import eu.kanade.tachiyomi.data.database.models.Manga
@@ -558,6 +560,9 @@ class ReaderActivity : BaseRxActivity<ReaderPresenter>() {
             subscriptions += preferences.showPageNumber().asObservable()
                 .subscribe { setPageNumberVisibility(it) }
 
+            subscriptions += preferences.trueColor().asObservable()
+                .subscribe { setTrueColor(it) }
+
             subscriptions += preferences.fullscreen().asObservable()
                 .subscribe { setFullscreen(it) }
 
@@ -569,6 +574,9 @@ class ReaderActivity : BaseRxActivity<ReaderPresenter>() {
 
             subscriptions += preferences.colorFilter().asObservable()
                 .subscribe { setColorFilter(it) }
+
+            subscriptions += preferences.colorFilterMode().asObservable()
+                .subscribe { setColorFilter(preferences.colorFilter().getOrDefault()) }
         }
 
         /**
@@ -612,6 +620,16 @@ class ReaderActivity : BaseRxActivity<ReaderPresenter>() {
          */
         private fun setPageNumberVisibility(visible: Boolean) {
             page_number.visibility = if (visible) View.VISIBLE else View.INVISIBLE
+        }
+
+        /**
+         * Sets the 32-bit color mode according to [enabled].
+         */
+        private fun setTrueColor(enabled: Boolean) {
+            if (enabled)
+                SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.ARGB_8888)
+            else
+                SubsamplingScaleImageView.setPreferredBitmapConfig(Bitmap.Config.RGB_565)
         }
 
         /**
@@ -707,7 +725,7 @@ class ReaderActivity : BaseRxActivity<ReaderPresenter>() {
          */
         private fun setColorFilterValue(value: Int) {
             color_overlay.visibility = View.VISIBLE
-            color_overlay.setBackgroundColor(value)
+            color_overlay.setFilterColor(value, preferences.colorFilterMode().getOrDefault())
         }
 
     }

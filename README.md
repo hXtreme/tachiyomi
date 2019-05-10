@@ -11,7 +11,7 @@ Tachiyomi is a free and open source manga reader for Android.
 ## Features
 
 Features include:
-* Online reading from sources such as KissManga, MangaFox, [and more](https://github.com/inorichi/tachiyomi-extensions)
+* Online reading from sources such as KissManga, MangaDex, [and more](https://github.com/inorichi/tachiyomi-extensions)
 * Local reading of downloaded manga
 * Configurable reader with multiple viewers, reading directions and other settings
 * [MyAnimeList](https://myanimelist.net/), [AniList](https://anilist.co/), and [Kitsu](https://kitsu.io/explore/anime) support
@@ -64,7 +64,7 @@ Catalogue requests should be created at https://github.com/inorichi/tachiyomi-ex
 ## FAQ
 
 [See our wiki.](https://github.com/inorichi/tachiyomi/wiki/FAQ)
-You can also reach out to us on [Discord](https://discord.gg/WrBkRk4).
+You can also reach out to us on [Discord](https://discord.gg/tachiyomi).
 
 ## License
 

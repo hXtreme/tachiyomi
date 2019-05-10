@@ -15,12 +15,7 @@ import android.support.customtabs.CustomTabsIntent
 import android.support.v4.content.pm.ShortcutInfoCompat
 import android.support.v4.content.pm.ShortcutManagerCompat
 import android.support.v4.graphics.drawable.IconCompat
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -47,6 +42,7 @@ import eu.kanade.tachiyomi.ui.library.ChangeMangaCategoriesDialog
 import eu.kanade.tachiyomi.ui.main.MainActivity
 import eu.kanade.tachiyomi.ui.manga.MangaController
 import eu.kanade.tachiyomi.util.getResourceColor
+import eu.kanade.tachiyomi.util.openInBrowser
 import eu.kanade.tachiyomi.util.snack
 import eu.kanade.tachiyomi.util.toast
 import eu.kanade.tachiyomi.util.truncateCenter
@@ -138,6 +134,7 @@ class MangaInfoController : NucleusController<MangaInfoPresenter>(),
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_open_in_browser -> openInBrowser()
+            R.id.action_open_in_web_view -> openInWebView()
             R.id.action_share -> shareManga()
             R.id.action_add_to_home_screen -> addToHomeScreen()
             else -> return super.onOptionsItemSelected(item)
@@ -291,15 +288,20 @@ class MangaInfoController : NucleusController<MangaInfoPresenter>(),
         val context = view?.context ?: return
         val source = presenter.source as? HttpSource ?: return
 
-        try {
-            val url = Uri.parse(source.mangaDetailsRequest(presenter.manga).url().toString())
-            val intent = CustomTabsIntent.Builder()
-                    .setToolbarColor(context.getResourceColor(R.attr.colorPrimary))
-                    .build()
-            intent.launchUrl(activity, url)
+        context.openInBrowser(source.mangaDetailsRequest(presenter.manga).url().toString())
+    }
+
+    private fun openInWebView() {
+        val source = presenter.source as? HttpSource ?: return
+
+        val url = try {
+            source.mangaDetailsRequest(presenter.manga).url().toString()
         } catch (e: Exception) {
-            context.toast(e.message)
+            return
         }
+
+        parentController?.router?.pushController(MangaWebViewController(source.id, url)
+            .withFadeTransaction())
     }
 
     /**
