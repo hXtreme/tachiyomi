@@ -18,6 +18,7 @@ import eu.kanade.tachiyomi.data.database.models.LibraryManga
 import eu.kanade.tachiyomi.data.database.models.Manga
 import eu.kanade.tachiyomi.data.download.DownloadManager
 import eu.kanade.tachiyomi.data.download.DownloadService
+import eu.kanade.tachiyomi.data.library.LibraryUpdateRanker.Companion.rankingScheme
 import eu.kanade.tachiyomi.data.library.LibraryUpdateService.Companion.start
 import eu.kanade.tachiyomi.data.notification.NotificationReceiver
 import eu.kanade.tachiyomi.data.notification.Notifications
@@ -205,6 +206,9 @@ class LibraryUpdateService(
         subscription = Observable
                 .defer {
                     val mangaList = getMangaToUpdate(intent, target)
+                            .sortedWith(
+                                    rankingScheme[preferences.libraryUpdatePrioritization().getOrDefault()]
+                            )
 
                     // Update either chapter list or manga details.
                     when (target) {
